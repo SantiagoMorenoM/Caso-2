@@ -52,6 +52,16 @@ public class Lector extends Thread{
 				
 				System.out.println(linea);
 				
+				//delay entre cada lectura de una nueva referencia
+				
+				try {
+					Thread.sleep(5);
+				} catch (InterruptedException e1) {
+					
+					e1.printStackTrace();
+				}
+				
+				
 				try {
 					linea = lector.readLine();
 				} catch (IOException e) {
