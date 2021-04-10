@@ -72,6 +72,8 @@ public class Paginas extends Thread{
 				System.out.println(linea);
 				
 				
+				referenciar(Integer.parseInt(linea));
+				
 				try {
 					Thread.sleep(5);
 				} catch (InterruptedException e1) {
@@ -86,7 +88,7 @@ public class Paginas extends Thread{
 					e.printStackTrace();
 				}
 				
-				referenciar(Integer.parseInt(linea));
+				
 			}
 			procesando = false;
 			
@@ -160,21 +162,23 @@ public class Paginas extends Thread{
 	}
 	
 	
-	public synchronized void correrAlaDerecha(Referencia r){
+	public synchronized void  correrAlaDerecha(Referencia r){
 		
-		Iterator it = PQ.iterator();
 		
-		while (it.hasNext()) {
+		Object[]referencias =  PQ.toArray();
+		
+		PQ.clear();
+		
+		for (int i = 0; i < referencias.length; i++) {
 				
-			Referencia re = (Referencia)(it.next());
+			Referencia actual = (Referencia)referencias[i];
 			
-	         if(re == r){
-	        	
-	        	re.AgregarUno();
-	         }
-	         
-	         else re.AgregarCero();
-	         
-	    }
+			if(actual == r) actual.AgregarUno();
+				
+			else actual.AgregarCero();
+			
+			PQ.add(actual);
+		}
+ 
 	}
 }
