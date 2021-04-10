@@ -1,5 +1,5 @@
 
-public class Referencia implements Comparable{
+public class Referencia implements Comparable<Referencia>{
 	
 	private int pagina;
 	private int bitMask;
@@ -22,11 +22,9 @@ public class Referencia implements Comparable{
 		this.bitMask >>= 1;
 	}
 	
-
+	
 	@Override
-	public int compareTo(Object o) {
-		
-		Referencia r = (Referencia)o;
+	public int compareTo(Referencia r) {
 		
 		if(this.bitMask > r.bitMask){
 			return 1;
@@ -37,6 +35,7 @@ public class Referencia implements Comparable{
 		else return 0;
 	}
 
+	
 	public int getBitMask(){
 		return this.bitMask;
 	}
@@ -45,5 +44,7 @@ public class Referencia implements Comparable{
 	public int darPagina(){
 		return this.pagina;
 	}
+
+	
 	
 }
