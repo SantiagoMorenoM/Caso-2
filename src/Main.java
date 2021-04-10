@@ -5,44 +5,39 @@ import java.io.IOException;
 
 public class Main {
 
+	
+	
 	public static void main(String[]args){
 		
-//		Lector lector1 = new Lector();
-//		Lector lector2 = new Lector();
-//		lector1.start();
-//		lector2.start();
+		BufferedReader lector = null;
+		try {
+			lector = new BufferedReader(new FileReader("./data/referencias1.txt"));
+		} catch (FileNotFoundException e) {
+			
+			e.printStackTrace();
+		} 
 		
-		Referencia r = new Referencia();
+		try {
+			
+			int cantidadPaginas = Integer.parseInt(lector.readLine());
+			int cantidadMarcosDePagina = Integer.parseInt(lector.readLine());
+			double porcentaje = Double.parseDouble(lector.readLine());
+			
+			Paginas threadP = new Paginas(cantidadPaginas, cantidadMarcosDePagina);
+			threadP.definirTipo(false);
+			
+			Paginas threadE = new Paginas();
+			threadE.definirTipo(true);
 		
-		System.out.println(r.getBitMask());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		r.AgregarUno();
 		
-		System.out.println(r.getBitMask());
+        
 		
-		r.AgregarUno();
 		
-		System.out.println(r.getBitMask());
-		
-r.AgregarUno();
-		
-		System.out.println(r.getBitMask());
-		
-r.AgregarUno();
-		
-		System.out.println(r.getBitMask());
-		
-		r.AgregarCero();
-		System.out.println(r.getBitMask());
-		
-		r.AgregarCero();
-		System.out.println(r.getBitMask());
-		
-		r.AgregarCero();
-		System.out.println(r.getBitMask());
-		
-		r.AgregarCero();
-		System.out.println(r.getBitMask());
+	
 		
 		
 	}
