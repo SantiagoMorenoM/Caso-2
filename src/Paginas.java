@@ -14,12 +14,14 @@ public class Paginas extends Thread{
 	private static int numFallos=0;
 	private static ArrayList<Integer> referenciados;
 	private boolean esEnvejecimiento;
-	
+	private static Semaforo[] semaforos= new Semaforo[4];
 	private static boolean procesando = true;
 
 	
 	
 	public Paginas(int numPaginas, int numMarcos) {
+		for(int i=0;i<semaforos.length;i++)
+			semaforos[i]=new Semaforo(1);
 		tabla= new int[numPaginas];
 		marcos= new boolean[numMarcos];
 		referencias= new Referencia[numPaginas];
@@ -72,9 +74,9 @@ public class Paginas extends Thread{
 				
 				System.out.println(linea);
 				
-				
+				semaforos[0].p();
 				referenciados.add(Integer.parseInt(linea));
-				
+				semaforos[0].v();
 				try {
 					Thread.sleep(5);
 				} catch (InterruptedException e1) {
@@ -107,37 +109,46 @@ public class Paginas extends Thread{
 					
 					e.printStackTrace();
 				}
+				semaforos[0].p();
 				if(referenciados.size()>0) {
 				boolean repetido = false;
+				semaforos[0].v();
 				
-				
+				semaforos[0].p();
+				semaforos[3].p();
 				repetido=marcos[referenciados.get(0)];
+				semaforos[3].v();
+				semaforos[0].v();
 				
-				
-				Semaforo semMarcos= new Semaforo(1);
+
 				boolean noHayDesocupada=true;
 				
-				
+				semaforos[3].p();
 				for(int i=0;i<marcos.length&&noHayDesocupada;i++) {
 					
-					semMarcos.p();
+				
 					noHayDesocupada=marcos[i];
-					semMarcos.v();
+			
 					if(!noHayDesocupada) {
 						if(!repetido) {
-						Semaforo semTabla= new Semaforo(1);
-						semTabla.p();
+						semaforos[0].p();
+						semaforos[2].p();
 						tabla[referenciados.get(0)]=i;
+						semaforos[2].v();
 						Referencia ref = new Referencia(referenciados.get(0));
 						referenciados.remove(0);
+						semaforos[0].v();
 						correrAlaDerecha(ref);
-						semTabla.v();}
+						}
 						else {
+							semaforos[0].p();
 							Referencia ref = new Referencia(referenciados.get(0));
+							semaforos[0].v();
 							correrAlaDerecha(ref);
 						}
 					}
 				}
+				semaforos[3].v();
 				if(noHayDesocupada) {
 					Semaforo semFallos= new Semaforo(1);
 					semFallos.p();
@@ -145,16 +156,26 @@ public class Paginas extends Thread{
 					semFallos.v();
 					
 				    int min=0;
+					semaforos[1].p();
 			        for(int i=0;i<referencias.length;i++) {
 					if(referencias[min].compareTo(referencias[i])<0) {
 							min=i;
 						}
 						}
+			    	semaforos[1].v();
+					semaforos[2].p();
 					int marcoDePagina = tabla[min];
 					tabla[min] = -1;
+					semaforos[2].v();
+					semaforos[1].p();
 					referencias[min]= new Referencia(min);
+					semaforos[1].v();
+					semaforos[0].p();
+					semaforos[2].p();
 					tabla[referenciados.get(0)]=marcoDePagina;
+					semaforos[2].v();
 					Referencia ref = new Referencia(referenciados.get(0));
+					semaforos[0].v();
 					correrAlaDerecha(ref);
 				}
 				
@@ -176,7 +197,7 @@ public class Paginas extends Thread{
 		
 		
 	
-		
+		semaforos[1].p();
 		for (int i = 0; i < referencias.length; i++) {
 				
 			Referencia actual = referencias[i];
@@ -186,6 +207,7 @@ public class Paginas extends Thread{
 			else actual.AgregarCero();
 			
 		}
+		semaforos[1].v();
  
 	}
 }
