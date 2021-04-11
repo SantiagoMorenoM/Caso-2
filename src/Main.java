@@ -30,6 +30,9 @@ public class Main {
 			
 			Paginas threadE = new Paginas();
 			threadE.definirTipo(true);
+			
+			threadP.start();
+			threadE.start();
 		
 		} catch (IOException e) {
 			e.printStackTrace();
