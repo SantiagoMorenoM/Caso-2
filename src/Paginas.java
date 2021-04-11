@@ -112,7 +112,7 @@ public class Paginas extends Thread{
 			int x =0;
 			while(procesando){
 				x++;
-				System.out.println("Entrando al while "+x);
+			//	System.out.println("Entrando al while "+x);
 				
 				try {
 					Thread.sleep(1);
@@ -122,28 +122,28 @@ public class Paginas extends Thread{
 				}
 				
 				semaforos[0].p();
-				System.out.println("paso sem if");
+				//System.out.println("paso sem if");
 				if(referenciados.size()>0) {
-					System.out.println("entro al if");	
+			//		System.out.println("entro al if");	
 				boolean repetido = false;
 				semaforos[0].v();
 				
 				semaforos[0].p();
-				System.out.println("prueba marcos");
+			//	System.out.println("prueba marcos");
 				
 				semaforos[2].p();
-				if(tabla[referenciados.get(0)] > 0){
+				if(tabla[referenciados.get(0)] >= 0){
 					semaforos[3].p();
 					repetido=marcos[tabla[referenciados.get(0)]];
 					semaforos[3].v();
 				}
 				semaforos[2].v();
-				System.out.println("prueba  salida marcos");
+			//	System.out.println("prueba  salida marcos");
 				semaforos[0].v();
 				
 
 				if(!repetido){
-					System.out.println("Entrando al for");
+					//System.out.println("Entrando al for");
 		
 					semaforos[3].p();
 					boolean noHayDesocupada=true;
@@ -151,30 +151,30 @@ public class Paginas extends Thread{
 						
 					
 						noHayDesocupada=marcos[i];
-						System.out.println(marcos[i] +" "+i );
+					//	System.out.println(marcos[i] +" "+i );
 						
 						if(!noHayDesocupada) {
-							System.out.println("Entro a nohaydesocupada");
+							//System.out.println("Entro a nohaydesocupada");
 							semaforos[0].p();
 							semaforos[2].p();
 							tabla[referenciados.get(0)]=i;
 							semaforos[2].v();
-							System.out.println("Se hizo cambio entabla");
+							//System.out.println("Se hizo cambio entabla");
 							
 							marcos[i] = true;
 							
-							System.out.println("Se hizo cambio en marcos");
+							//System.out.println("Se hizo cambio en marcos");
 							Referencia ref = new Referencia(referenciados.get(0));
 							referenciados.remove(0);
 							semaforos[0].v();
 							correrAlaDerecha(ref);
 							
 						}
-						System.out.println("salio de nohaydesocupada");
+						//System.out.println("salio de nohaydesocupada");
 					}
 					semaforos[3].v();
 					if(noHayDesocupada) {
-						System.err.println("Entro a un fallo " +numFallos);
+					//	System.err.println("Entro a un fallo " +numFallos);
 						Semaforo semFallos= new Semaforo(1);
 						semFallos.p();
 						numFallos++;
@@ -182,14 +182,18 @@ public class Paginas extends Thread{
 						
 					    int min=0;
 						semaforos[1].p();
+						
 				        for(int i=0;i<referencias.length;i++) {
+				        	
 				        	if(referencias[min].compareTo(referencias[i])==1) {
+				        	
 								min=i;
 							}
 						}
 				    	semaforos[1].v();
 						semaforos[2].p();
 						int marcoDePagina = tabla[min];
+						System.out.println("Sacó a:"+ min);
 						tabla[min] = -1;
 						semaforos[2].v();
 						semaforos[1].p();
@@ -214,13 +218,14 @@ public class Paginas extends Thread{
 					correrAlaDerecha(ref);
 				}
 				
-				System.out.println("Saliendo del for");
+			//	System.out.println("Saliendo del for");
 				
 				}
 				
 				else{
 					semaforos[0].v();
 				}
+				
 			}
 			System.out.println(numFallos);
 			
