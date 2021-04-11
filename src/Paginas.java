@@ -132,7 +132,7 @@ public class Paginas extends Thread{
 				System.out.println("prueba marcos");
 				
 				semaforos[2].p();
-				if(tabla[referenciados.get(0)] > 0){
+				if(tabla[referenciados.get(0)] >= 0){
 					semaforos[3].p();
 					repetido=marcos[tabla[referenciados.get(0)]];
 					semaforos[3].v();
@@ -173,7 +173,7 @@ public class Paginas extends Thread{
 						System.out.println("salio de nohaydesocupada");
 					}
 					semaforos[3].v();
-					if(noHayDesocupada) {
+					if(noHayDesocupada ) {
 						System.err.println("Entro a un fallo " +numFallos);
 						Semaforo semFallos= new Semaforo(1);
 						semFallos.p();
@@ -181,15 +181,26 @@ public class Paginas extends Thread{
 						semFallos.v();
 						
 					    int min=0;
+					    System.err.println("Tam ref "+referencias.length);
 						semaforos[1].p();
+						System.err.println("ENTRO AL FOR");
 				        for(int i=0;i<referencias.length;i++) {
-				        	if(referencias[min].compareTo(referencias[i])==1) {
+				        	System.err.println(referencias[i].getBitMask());
+				        	
+				        	if(referencias[min].getBitMask()==0){
+				        		min = i;
+				        	}
+				        	if(referencias[i].getBitMask()>0 && referencias[min].compareTo(referencias[i])==1) {
 								min=i;
+								System.err.println("EN EL IF");
 							}
 						}
+				        System.out.println("bitmask del menor "+referencias[min].getBitMask());
 				    	semaforos[1].v();
+				    	
 						semaforos[2].p();
 						int marcoDePagina = tabla[min];
+						System.err.println(min);
 						tabla[min] = -1;
 						semaforos[2].v();
 						semaforos[1].p();
@@ -207,6 +218,7 @@ public class Paginas extends Thread{
 				}
 				
 				else{
+					System.err.println("Entrando else repetidos");
 					semaforos[0].p();
 					Referencia ref = new Referencia(referenciados.get(0));
 					referenciados.remove(0);
@@ -238,15 +250,22 @@ public class Paginas extends Thread{
 		
 	
 		semaforos[1].p();
+		System.err.println("Entro a correr D " +r.darPagina());
 		for (int i = 0; i < referencias.length; i++) {
 				
 			Referencia actual = referencias[i];
 			
-			if(actual.equals(r)) actual.AgregarUno();
+			if(actual.darPagina() == r.darPagina()){
+				actual.AgregarUno();
+				System.err.println("El bitmask "+actual.getBitMask());
+			}
 				
 			else actual.AgregarCero();
 			
+			
+			
 		}
+		
 		semaforos[1].v();
  
 	}
