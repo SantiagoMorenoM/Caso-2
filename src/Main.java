@@ -4,16 +4,23 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 
 public class Main {
 
 	private static PriorityQueue<Referencia> PQ = new PriorityQueue<Referencia>();
 	
+	
 	public static void main(String[]args){
-		
+		String numero = null;
 		BufferedReader lector = null;
 		try {
-			lector = new BufferedReader(new FileReader("./data/referencias1.txt"));
+			
+			Scanner scaner = new Scanner(System.in);
+			System.out.println("Ingrese el número del archivo a usar");
+			numero = scaner.next();
+			
+			lector = new BufferedReader(new FileReader("./data/referencias"+numero+".txt"));
 		} catch (FileNotFoundException e) {
 			
 			e.printStackTrace();
@@ -21,11 +28,12 @@ public class Main {
 		
 		try {
 			
-			int cantidadPaginas = Integer.parseInt(lector.readLine());
 			int cantidadMarcosDePagina = Integer.parseInt(lector.readLine());
+			int cantidadPaginas = Integer.parseInt(lector.readLine());
+			
 			double porcentaje = Double.parseDouble(lector.readLine());
 			
-			Paginas threadP = new Paginas(cantidadPaginas, cantidadMarcosDePagina);
+			Paginas threadP = new Paginas(cantidadPaginas, cantidadMarcosDePagina,numero);
 			threadP.definirTipo(false);
 			
 			Paginas threadE = new Paginas();

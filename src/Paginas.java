@@ -1,3 +1,4 @@
+import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -5,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.PriorityQueue;
+
 
 public class Paginas extends Thread{
 
@@ -17,9 +19,14 @@ public class Paginas extends Thread{
 	private static Semaforo[] semaforos= new Semaforo[4];
 	private static boolean procesando = true;
 
+	private String numArchivo = "1";
 	
 	
-	public Paginas(int numPaginas, int numMarcos) {
+	
+	public Paginas(int numPaginas, int numMarcos, String archivo) {
+		
+		numArchivo = archivo;
+		referenciados = new ArrayList<Integer>();
 		for(int i=0;i<semaforos.length;i++)
 			semaforos[i]=new Semaforo(1);
 		tabla= new int[numPaginas];
@@ -48,11 +55,12 @@ public class Paginas extends Thread{
 			BufferedReader lector = null;
 			
 			try {
-				lector = new BufferedReader(new FileReader("./data/referencias1.txt"));
+				lector = new BufferedReader(new FileReader("./data/referencias"+numArchivo+".txt"));
 			} catch (FileNotFoundException e) {
 				
 				e.printStackTrace();
 			} 
+			
 			
 			
 			//Leer los tres primeros datos y guardarlos
@@ -101,7 +109,10 @@ public class Paginas extends Thread{
 		}
 		else {
 			
+			int x =0;
 			while(procesando){
+				x++;
+				System.out.println("Entrando al while "+x);
 				
 				try {
 					Thread.sleep(1);
@@ -109,80 +120,109 @@ public class Paginas extends Thread{
 					
 					e.printStackTrace();
 				}
+				
 				semaforos[0].p();
+				System.out.println("paso sem if");
 				if(referenciados.size()>0) {
+					System.out.println("entro al if");	
 				boolean repetido = false;
 				semaforos[0].v();
 				
 				semaforos[0].p();
-				semaforos[3].p();
-				repetido=marcos[referenciados.get(0)];
-				semaforos[3].v();
+				System.out.println("prueba marcos");
+				
+				semaforos[2].p();
+				if(tabla[referenciados.get(0)] > 0){
+					semaforos[3].p();
+					repetido=marcos[tabla[referenciados.get(0)]];
+					semaforos[3].v();
+				}
+				semaforos[2].v();
+				System.out.println("prueba  salida marcos");
 				semaforos[0].v();
 				
 
-				boolean noHayDesocupada=true;
-				
-				semaforos[3].p();
-				for(int i=0;i<marcos.length&&noHayDesocupada;i++) {
+				if(!repetido){
+					System.out.println("Entrando al for");
+		
+					semaforos[3].p();
+					boolean noHayDesocupada=true;
+					for(int i=0;i<marcos.length&&noHayDesocupada;i++) {
+						
 					
-				
-					noHayDesocupada=marcos[i];
-			
-					if(!noHayDesocupada) {
-						if(!repetido) {
-						semaforos[0].p();
-						semaforos[2].p();
-						tabla[referenciados.get(0)]=i;
-						semaforos[2].v();
-						Referencia ref = new Referencia(referenciados.get(0));
-						referenciados.remove(0);
-						semaforos[0].v();
-						correrAlaDerecha(ref);
-						}
-						else {
+						noHayDesocupada=marcos[i];
+						System.out.println(marcos[i] +" "+i );
+						
+						if(!noHayDesocupada) {
+							System.out.println("Entro a nohaydesocupada");
 							semaforos[0].p();
+							semaforos[2].p();
+							tabla[referenciados.get(0)]=i;
+							semaforos[2].v();
+							System.out.println("Se hizo cambio entabla");
+							
+							marcos[i] = true;
+							
+							System.out.println("Se hizo cambio en marcos");
 							Referencia ref = new Referencia(referenciados.get(0));
+							referenciados.remove(0);
 							semaforos[0].v();
 							correrAlaDerecha(ref);
+							
 						}
+						System.out.println("salio de nohaydesocupada");
 					}
-				}
-				semaforos[3].v();
-				if(noHayDesocupada) {
-					Semaforo semFallos= new Semaforo(1);
-					semFallos.p();
-					numFallos++;
-					semFallos.v();
+					semaforos[3].v();
+					if(noHayDesocupada) {
+						System.err.println("Entro a un fallo " +numFallos);
+						Semaforo semFallos= new Semaforo(1);
+						semFallos.p();
+						numFallos++;
+						semFallos.v();
+						
+					    int min=0;
+						semaforos[1].p();
+				        for(int i=0;i<referencias.length;i++) {
+				        	if(referencias[min].compareTo(referencias[i])==1) {
+								min=i;
+							}
+						}
+				    	semaforos[1].v();
+						semaforos[2].p();
+						int marcoDePagina = tabla[min];
+						tabla[min] = -1;
+						semaforos[2].v();
+						semaforos[1].p();
+						referencias[min]= new Referencia(min);
+						semaforos[1].v();
+						semaforos[0].p();
+						semaforos[2].p();
+						tabla[referenciados.get(0)]=marcoDePagina;
+						semaforos[2].v();
+						Referencia ref = new Referencia(referenciados.get(0));
+						semaforos[0].v();
+						correrAlaDerecha(ref);
+					}
 					
-				    int min=0;
-					semaforos[1].p();
-			        for(int i=0;i<referencias.length;i++) {
-					if(referencias[min].compareTo(referencias[i])<0) {
-							min=i;
-						}
-						}
-			    	semaforos[1].v();
-					semaforos[2].p();
-					int marcoDePagina = tabla[min];
-					tabla[min] = -1;
-					semaforos[2].v();
-					semaforos[1].p();
-					referencias[min]= new Referencia(min);
-					semaforos[1].v();
+				}
+				
+				else{
 					semaforos[0].p();
-					semaforos[2].p();
-					tabla[referenciados.get(0)]=marcoDePagina;
-					semaforos[2].v();
 					Referencia ref = new Referencia(referenciados.get(0));
+					referenciados.remove(0);
 					semaforos[0].v();
 					correrAlaDerecha(ref);
 				}
 				
+				System.out.println("Saliendo del for");
 				
 				}
+				
+				else{
+					semaforos[0].v();
+				}
 			}
-			
+			System.out.println(numFallos);
 			
 		}
 		
@@ -210,4 +250,6 @@ public class Paginas extends Thread{
 		semaforos[1].v();
  
 	}
+	
+
 }
