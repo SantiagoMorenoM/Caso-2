@@ -15,7 +15,7 @@ public class Referencia implements Comparable<Referencia>{
 
 	public void AgregarUno(){
 		this.bitMask >>= 1;
-		this.bitMask = this.bitMask ^ 536870912;
+		this.bitMask ^= 536870912;
 	}
 
 	public void AgregarCero(){
@@ -26,7 +26,7 @@ public class Referencia implements Comparable<Referencia>{
 	@Override
 	public int compareTo(Referencia r) {
 
-		if(this.bitMask >= r.bitMask){
+		if(this.bitMask > r.bitMask){
 			return 1;
 		}
 		else if(this.bitMask < r.bitMask){
