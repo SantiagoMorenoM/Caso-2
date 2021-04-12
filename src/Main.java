@@ -8,8 +8,6 @@ import java.util.Scanner;
 
 public class Main {
 
-	private static PriorityQueue<Referencia> PQ = new PriorityQueue<Referencia>();
-
 
 	public static void main(String[]args){
 		String numero = null;
